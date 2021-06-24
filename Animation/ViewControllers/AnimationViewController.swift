@@ -164,7 +164,50 @@ class AnimationViewController: UIViewController {
         startButton.animation = Spring.AnimationPreset.Pop.rawValue
         startButton.animate()
     }
+        
+    // MARK: - IBActions
+    @IBAction func startButtonTapped(_ sender: SpringButton) {
+        var animationConfiguration = AnimationConfiguration()
+
+        // prevent for index out of range
+        if currentAnimationId >= animations.count - 1 {
+            currentAnimationId = 0
+        }
+        if currentCurveId >= animationCurves.count - 1 {
+            currentCurveId = 0
+        }
+        
+        animateStartButton()
+        animateSmile()
+        
+        configureAnimationDescription(name: animations[currentAnimationId].rawValue, description: animationCurves[currentAnimationId].rawValue)
+        
+        animationConfiguration.animation = animations[currentAnimationId]
+        animationConfiguration.curve = animationCurves[currentCurveId]
+        
+        // next animation and curve
+        currentAnimationId += 1
+        currentCurveId += 1
+        
+        configureAnimation(with: animationConfiguration)
+        
+        animationView.animate()
+        
+        startButton.setTitle("Next with \(animations[currentAnimationId].rawValue)", for: .normal)
+    }
     
+    @IBAction func resetButton() {
+        configureAnimation(with: defaultAnimationConfiguration)
+        currentAnimationId = 0
+        currentCurveId = 0
+        
+        startButton.setTitle("Start with \(animations[currentAnimationId].rawValue)", for: .normal)
+    }
+    
+}
+
+// MARK: - Extensions
+extension AnimationViewController {
     private func drawCurvedPath() -> UIBezierPath {
         let path = createCirclePath()
         let shapeLayer = CAShapeLayer()
@@ -209,45 +252,4 @@ class AnimationViewController: UIViewController {
         
         return path
     }
-        
-    // MARK: - IBActions
-    @IBAction func startButtonTapped(_ sender: SpringButton) {
-        var animationConfiguration = AnimationConfiguration()
-
-        // prevent for index out of range
-        if currentAnimationId >= animations.count - 1 {
-            currentAnimationId = 0
-        }
-        if currentCurveId >= animationCurves.count - 1 {
-            currentCurveId = 0
-        }
-        
-        animateStartButton()
-        animateSmile()
-        
-        configureAnimationDescription(name: animations[currentAnimationId].rawValue, description: animationCurves[currentAnimationId].rawValue)
-        
-        animationConfiguration.animation = animations[currentAnimationId]
-        animationConfiguration.curve = animationCurves[currentCurveId]
-        
-        // next animation and curve
-        currentAnimationId += 1
-        currentCurveId += 1
-        
-        configureAnimation(with: animationConfiguration)
-        
-        animationView.animate()
-        
-        startButton.setTitle("Next with \(animations[currentAnimationId].rawValue)", for: .normal)
-    }
-    
-    @IBAction func resetButton() {
-        configureAnimation(with: defaultAnimationConfiguration)
-        currentAnimationId = 0
-        currentCurveId = 0
-        
-        startButton.setTitle("Start with \(animations[currentAnimationId].rawValue)", for: .normal)
-    }
-    
 }
-
